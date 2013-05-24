@@ -7,28 +7,28 @@
 # 
 # See FasterCSV for documentation.
 
-if RUBY_VERSION >= "1.9"
-  class FasterCSV
-    def self.const_missing(*_)
-      raise NotImplementedError, "Please switch to Ruby 1.9's standard CSV "  +
-                                 "library.  It's FasterCSV plus support for " +
-                                 "Ruby 1.9's m17n encoding engine."
-    end
-    
-    def self.method_missing(*_)
-      const_missing
-    end
-    
-    def method_missing(*_)
-      self.class.const_missing
-    end
-  end
-else
-  require "forwardable"
-  require "English"
-  require "enumerator"
-  require "date"
-  require "stringio"
+#if RUBY_VERSION >= "1.9"
+#  class FasterCSV
+#    def self.const_missing(*_)
+#      raise NotImplementedError, "Please switch to Ruby 1.9's standard CSV "  +
+#                                 "library.  It's FasterCSV plus support for " +
+#                                 "Ruby 1.9's m17n encoding engine."
+#    end
+#
+#    def self.method_missing(*_)
+#      const_missing
+#    end
+#
+#    def method_missing(*_)
+#      self.class.const_missing
+#    end
+#  end
+#else
+  #require "forwardable"
+  #require "English"
+  #require "enumerator"
+  #require "date"
+  #require "stringio"
 
   # 
   # This class provides a complete interface to CSV files and data.  It offers
@@ -144,8 +144,8 @@ else
 
       ### Array Delegation ###
 
-      extend Forwardable
-      def_delegators :@row, :empty?, :length, :size
+      #extend Forwardable
+      #def_delegators :@row, :empty?, :length, :size
 
       # Returns +true+ if this is a header row.
       def header_row?
@@ -437,8 +437,8 @@ else
 
       ### Array Delegation ###
 
-      extend Forwardable
-      def_delegators :@table, :empty?, :length, :size
+      #extend Forwardable
+      #def_delegators :@table, :empty?, :length, :size
 
       # 
       # Returns a duplicate table object, in column mode.  This is handy for 
@@ -1129,39 +1129,39 @@ else
     # something else, use +options+ to setup converters or provide a custom
     # csv_load() implementation.
     # 
-    def self.load(io_or_str, options = Hash.new)
-      csv = FasterCSV.new(io_or_str, options)
-
-      # load meta information
-      meta = Hash[*csv.shift]
-      cls  = meta["class"].split("::").inject(Object) do |c, const|
-        c.const_get(const)
-      end
-
-      # load headers
-      headers = csv.shift
-
-      # unserialize each object stored in the file
-      results = csv.inject(Array.new) do |all, row|
-        begin
-          obj = cls.csv_load(meta, headers, row)
-        rescue NoMethodError
-          obj = cls.allocate
-          headers.zip(row) do |name, value|
-            if name[0] == ?@
-              obj.instance_variable_set(name, value)
-            else
-              obj.send(name, value)
-            end
-          end
-        end
-        all << obj
-      end
-
-      csv.close unless io_or_str.is_a? String
-
-      results
-    end
+    #def self.load(io_or_str, options = Hash.new)
+    #  csv = FasterCSV.new(io_or_str, options)
+    #
+    #  # load meta information
+    #  meta = Hash[*csv.shift]
+    #  cls  = meta["class"].split("::").inject(Object) do |c, const|
+    #    c.const_get(const)
+    #  end
+    #
+    #  # load headers
+    #  headers = csv.shift
+    #
+    #  # unserialize each object stored in the file
+    #  results = csv.inject(Array.new) do |all, row|
+    #    begin
+    #      obj = cls.csv_load(meta, headers, row)
+    #    rescue NoMethodError
+    #      obj = cls.allocate
+    #      headers.zip(row) do |name, value|
+    #        if name[0] == ?@
+    #          obj.instance_variable_set(name, value)
+    #        else
+    #          obj.send(name, value)
+    #        end
+    #      end
+    #    end
+    #    all << obj
+    #  end
+    #
+    #  csv.close unless io_or_str.is_a? String
+    #
+    #  results
+    #end
 
     # 
     # :call-seq:
@@ -1227,6 +1227,9 @@ else
         csv
       end
     end
+
+    # TODO: wndxlori
+    def close; end
 
     # 
     # :call-seq:
@@ -1448,11 +1451,11 @@ else
 
     ### IO and StringIO Delegation ###
 
-    extend Forwardable
-    def_delegators :@io, :binmode, :close, :close_read, :close_write, :closed?,
-                         :eof, :eof?, :fcntl, :fileno, :flush, :fsync, :ioctl,
-                         :isatty, :pid, :pos, :reopen, :seek, :stat, :string,
-                         :sync, :sync=, :tell, :to_i, :to_io, :tty?
+    #extend Forwardable
+    #def_delegators :@io, :binmode, :close, :close_read, :close_write, :closed?,
+    #                     :eof, :eof?, :fcntl, :fileno, :flush, :fsync, :ioctl,
+    #                     :isatty, :pid, :pos, :reopen, :seek, :stat, :string,
+    #                     :sync, :sync=, :tell, :to_i, :to_io, :tty?
 
     # Rewinds the underlying IO object and resets FasterCSV's lineno() counter.
     def rewind
@@ -1995,7 +1998,7 @@ else
       row
     end
   end
-end
+#end
 
 # Another name for FasterCSV.
 FCSV = FasterCSV
